@@ -1,54 +1,59 @@
 class StableMarriage:
     def __init__(self, n):
-        self.people = n
-        self.males = []
-        self.females = []
+        self.n = n
+        self.male_preferences = {} 
+        self.female_preferences = {}  
+        self.femalesEngaged = {}  
+        self.malesEngaged = {}  
+        self.male_proposals = {}  
 
     def read_input(self, filename):
         with open(filename, 'r') as file:
             n = int(file.readline().strip())
-            for _ in range(n):
-                row = list(map(int, file.readline().strip().split()))
-                self.males.append(row)
 
             for _ in range(n):
                 row = list(map(int, file.readline().strip().split()))
-                self.females.append(row)
+                male = row[0]
+                preferences = row[1:]
+                self.male_preferences[male] = preferences
+                self.malesEngaged[male] = None
+                self.male_proposals[male] = 0
 
-    def print(self):
-        print("The 2D array is:")
-        for row in self.males:
-            print(row)
+            for _ in range(n):
+                row = list(map(int, file.readline().strip().split()))
+                female = row[0]
+                preferences = row[1:]
+                self.female_preferences[female] = preferences
+                self.femalesEngaged[female] = None
 
-        # Print the 2D array
-        print("\n\nThe 2D array is:")
-        for row in self.females:
-            print(row)
+    def gale_shapley(self):
+        while None in self.malesEngaged.values():  
+            for male in self.malesEngaged.keys():
+                if self.malesEngaged[male] is None:
+                    female = self.male_preferences[male][self.male_proposals[male]]
+                    current_male = self.femalesEngaged[female]
 
-    def returnPairs(self):
-        pairs = set()
+                    if current_male is None:
+                    
+                        self.malesEngaged[male] = female
+                        self.femalesEngaged[female] = male
+                    else:
+                    
+                        if self.female_preferences[female].index(male) < self.female_preferences[female].index(current_male):
+                            self.malesEngaged[male] = female
+                            self.femalesEngaged[female] = male
+                            self.malesEngaged[current_male] = None
+                    self.male_proposals[male] += 1
 
-
-        return pairs
-    
-    def propose(self):
-        pass
-
-    def accept_deny(self):
-        pass
-
-    def choiceBetter(self):
-        pass
-
-
-
-
-
+    def print_matches(self):
+        for female, male in self.femalesEngaged.items():
+            print(f'Female {female} is engaged to Male {male}')
 
 
+if __name__ == "__main__":
+    n = 6  
+    marriage = StableMarriage(n)
+    marriage.read_input("input.txt")  
 
-# Example usage:
-sm = StableMarriage(6)
-sm.read_input('input.txt')
-sm.print()
-
+    marriage.gale_shapley()
+    marriage.print_matches()
