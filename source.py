@@ -47,7 +47,7 @@ class StableMarriage:
 
     def print_matches(self):
         for female, male in self.femalesEngaged.items():
-            print(f'Female {female} is engaged to Male {male}')
+            print(f'Male {male} : Female {female}')
 
 
 if __name__ == "__main__":
